@@ -1,36 +1,22 @@
-# Función para recodificar los meses de algunos archivos
 
 crear_mes <- function(mes, type = "largo") {
     # creating the pipe
     `%>%` <- magrittr::`%>%`
 
-    meses <- c("Enero",
-               "Febrero",
-               "Marzo",
-               "Abril",
-               "Mayo",
-               "Junio",
-               "Julio",
-               "Agosto",
-               "Septiembre",
-               "Octubre",
-               "Noviembre",
-               "Diciembre")
-
-    if(type == 'largo'){
+    if(is.numeric(mes)){
         dplyr::recode(mes,
-               `1` = meses[1],
-               `2` = meses[2],
-               `3` = meses[3],
-               `4` = meses[4],
-               `5` = meses[5],
-               `6` = meses[6],
-               `7` = meses[7],
-               `8` = meses[8],
-               `9` = meses[9],
-               `10` = meses[10],
-               `11` = meses[11],
-               `12` = meses[12])
+               `1` = "Enero",
+               `2` = "Febrero",
+               `3` = "Marzo",
+               `4` = "Abril",
+               `5` = "Mayo",
+               `6` = "Junio",
+               `7` = "Julio",
+               `8` = "Agosto",
+               `9` = "Septiembre",
+               `10` = "Octubre",
+               `11` = "Noviembre",
+               `12` = "Diciembre")
 
     } else if(type == "corto"){
 
@@ -50,8 +36,27 @@ crear_mes <- function(mes, type = "largo") {
     }
 }
 
-# Función para descargar data del IPC
+#' Descarga las series del IPC
+#'
+#' Descarga las series del IPC de la Republica Dominicana
+#' con diferentes desagregaciones
+#'
+#' @param desagregacion string indicando la desagregacion deseada. opciones:
+#' "general", "grupos", "regiones", "subyacente", "tnt" (transable y no transable)
+#'
+#' @return Un tibble con las series del ipc con la desagregacion deseada
+#' @examples
+#' get_ipc_data()
+#' get_ipc_data(desagregacion = "grupos")
+#' get_ipc_data(desagregacion = "regiones")
+
+
+
+# Funcion para descargar data del IPC
 get_ipc_data <- function(desagregacion = "general"){
+
+    # Asignando el pipe para usarlo sin cargar dplyr
+    `%>%` <- magrittr::`%>%`
 
     if(desagregacion == "general") {
         # Descarga el ipc general  ---------------------------
@@ -81,7 +86,7 @@ get_ipc_data <- function(desagregacion = "general"){
             ) %>%
             dplyr::filter(!is.na(mes)) %>%
             dplyr::mutate(
-                fecha = seq(ymd("1984/01/01"),
+                fecha = seq(lubridate::ymd("1984/01/01"),
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha)
@@ -132,11 +137,11 @@ get_ipc_data <- function(desagregacion = "general"){
             setNames(header_ipc_grupos) %>%
             dplyr::filter(!is.na(ipc_ayb)) %>%
             dplyr::mutate(
-                fecha = seq(ymd('1999/01/01'),
+                fecha = seq(lubridate::ymd('1999/01/01'),
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = month(fecha), type = "largo")) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "largo")) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_grupos)
@@ -145,7 +150,7 @@ get_ipc_data <- function(desagregacion = "general"){
         # IPC por regiones ---------------------------------------
 
         # Header ipc por regiones
-        heager_ipc_regiones <- c(
+        header_ipc_regiones <- c(
             "year", "mes", "ipc_ozama", "ipc_ozama_vm", "ipc_cibao",
             "ipc_cibao_vm", "ipc_este", "ipc_este_vm", "ipc_sur",
             "ipc_sur_vm")
@@ -164,7 +169,7 @@ get_ipc_data <- function(desagregacion = "general"){
         download.file(url_descarga, file_path)
 
         # importar files con ipc por regiones
-        ipc_region <- read_excel(
+        ipc_region <- readxl::read_excel(
             file_path,
             skip = 7,
             col_names = F
@@ -173,19 +178,19 @@ get_ipc_data <- function(desagregacion = "general"){
         # adecuando el archivo
         ipc_region <-
             ipc_region %>%
-            dplyr::set_names(header_ipc_region) %>%
+            purrr::set_names(header_ipc_regiones) %>%
             dplyr::filter(!is.na(mes)) %>%
             dplyr::mutate(
-                fecha = seq(ymd('2011/01/01'),
+                fecha = seq(lubridate::ymd('2011/01/01'),
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha))) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_region)
 
-    } else if(desagregacion == "sns") {
+    } else if(desagregacion == "subyacente") {
         # IPC según subyacente o no subyacente -----------------------
 
         #Header ipc subyacente o no subyacente
@@ -208,7 +213,7 @@ get_ipc_data <- function(desagregacion = "general"){
         download.file(url_descarga, file_path)
 
         # importar el archivo
-        ipc_subyacente <- read_excel(
+        ipc_subyacente <- readxl::read_excel(
             file_path,
             skip = 25,
             col_names = F
@@ -221,11 +226,11 @@ get_ipc_data <- function(desagregacion = "general"){
             dplyr::select(x1:x6) %>%
             setNames(header_ipc_subyacente) %>%
             dplyr::mutate(
-                fecha = seq(ymd('2000/01/01'),
+                fecha = seq(lubridate::ymd('2000/01/01'),
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha))) %>%
             dplyr::select(fecha, year, mes, everything()) %>%
             dplyr::filter(!is.na(ipc_subyacente))
 
@@ -255,7 +260,7 @@ get_ipc_data <- function(desagregacion = "general"){
         download.file(url_descarga, file_path)
 
         # importar archivo
-        ipc_tnt <- read_excel(
+        ipc_tnt <- readxl::read_excel(
             file_path,
             skip = 27,
             col_names = F,
@@ -268,11 +273,11 @@ get_ipc_data <- function(desagregacion = "general"){
             setNames(header_ipc_tnt) %>%
             dplyr::filter(!is.na(mes)) %>%
             dplyr::mutate(
-                fecha = seq(ymd('1999/02/01'),
+                fecha = seq(lubridate::ymd('1999/02/01'),
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha))) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_tnt)

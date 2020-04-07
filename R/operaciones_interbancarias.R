@@ -1,4 +1,10 @@
+
+
 get_op_interbancaria <- function() {
+
+        # Para usar el pipe sin cargar dplyr
+        `%>%` <- magrittr::`%>%`
+
      # Url del archivo en la página del Banco Central
      web_url <-  paste0("https://cdn.bancentral.gov.do/documents/estadisticas/",
                        "sector-monetario-y-financiero/documents/",
@@ -31,10 +37,10 @@ get_op_interbancaria <- function() {
          dplyr::mutate(mes = as.character(mes)) %>%
          dplyr::mutate(
              fecha = seq(
-                 ymd("2000/01/01"),
+                 lubridate::ymd("2000/01/01"),
                  length.out = length(mes),
                  by = "month"),
-             year = year(fecha)
+             year = lubridate::year(fecha)
          ) %>%
          # excluye todas las columnas que no
         dplyr::select(fecha, year, mes, everything())
