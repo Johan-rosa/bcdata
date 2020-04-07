@@ -1,6 +1,8 @@
 # Función para recodificar los meses de algunos archivos
 
 crear_mes <- function(mes, type = "largo") {
+    # creating the pipe
+    `%>%` <- magrittr::`%>%`
 
     meses <- c("Enero",
                "Febrero",
