@@ -67,7 +67,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, quiet = TRUE, mode = "wb")
 
         # leer el archivo
         ipc_general <- readxl::read_excel(
