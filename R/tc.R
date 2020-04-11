@@ -25,7 +25,7 @@ get_tcambio <- function(frecuencia = "diaria") {
     path_tc <- tempfile(pattern = "", fileext = ".xls")
 
     # Descargando el archivo
-    download.file(url_tc, path_tc, mode = "wb")
+    download.file(url_tc, path_tc, mode = "wb", quiet = TRUE)
 
     suppressMessages(
         suppressWarnings(
