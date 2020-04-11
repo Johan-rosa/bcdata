@@ -31,10 +31,10 @@ get_tasas_bm <- function(tipo = 'pasivas') {
         pasivas4_17_path <- tempfile(pattern = "", fileext = "")
 
         # descargando los excel
-        download.file(url_tasas_pasivas_91_07, pasivas_9107_path)
-        download.file(url_tasas_pasivas_08_12, pasivas2_0812_path)
-        download.file(url_tasas_pasivas_13_16, pasivas3_1316_path)
-        download.file(url_tasas_pasivas_17, pasivas4_17_path)
+        download.file(url_tasas_pasivas_91_07, pasivas_9107_path, mode = "wb")
+        download.file(url_tasas_pasivas_08_12, pasivas2_0812_path, mode = "wb")
+        download.file(url_tasas_pasivas_13_16, pasivas3_1316_path, mode = "wb")
+        download.file(url_tasas_pasivas_17, pasivas4_17_path, mode = "wb")
 
         # importar los archivos
         pasivas_9107 <- readxl::read_excel(pasivas_9107_path, sheet = "Pasivas",
@@ -155,10 +155,10 @@ get_tasas_bm <- function(tipo = 'pasivas') {
         path_activas_17 <- tempfile(pattern = "", fileext = ".xlsx")
 
         # descargando los archivos --- --- --- --- --- --- --- --- --- --- --- --- -
-        download.file(url_activas_9107, path_activas_9107)
-        download.file(url_activas_0812, path_activas_0812)
-        download.file(url_activas_1316, path_activas_1316)
-        download.file(url_activas_17, path_activas_17)
+        download.file(url_activas_9107, path_activas_9107, mode = "wb")
+        download.file(url_activas_0812, path_activas_0812, mode = "wb")
+        download.file(url_activas_1316, path_activas_1316, mode = "wb")
+        download.file(url_activas_17, path_activas_17, mode = "wb")
 
         # Importando los archivos --- --- --- --- --- --- --- --- --- --- --- --- --
         # Tasas activas 1991-2007

@@ -65,7 +65,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, mode = "wb")
 
         # leer el archivo
         ipc_general <- readxl::read_excel(
@@ -105,7 +105,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, mode = "wb")
 
         # header del dataframe
         header_ipc_grupos <- c(
@@ -164,7 +164,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, mode = "wb")
 
         # importar files con ipc por regiones
         ipc_region <- readxl::read_excel(
@@ -208,7 +208,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xlsx")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, mode = "wb")
 
         # importar el archivo
         ipc_subyacente <- readxl::read_excel(
@@ -255,7 +255,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-        download.file(url_descarga, file_path)
+        download.file(url_descarga, file_path, mode = "wb")
 
         # importar archivo
         ipc_tnt <- readxl::read_excel(

@@ -13,7 +13,7 @@ get_op_interbancaria <- function() {
      file_path <- tempfile(pattern = "", fileext = ".xls")
 
      # Descarga del archivo
-     download.file(web_url, file_path)
+     download.file(web_url, file_path, mode = "wb")
 
      # Importando el archivo
      op_interbancaria <- xlsx::read.xlsx(

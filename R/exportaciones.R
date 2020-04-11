@@ -50,7 +50,7 @@ get_exportaciones <- function() {
     download <- purrr::possibly(download.file, otherwise = -1)
 
     # descargar archivos
-    descarga <- purrr::map2(url_descarga, files_path, ~download(.x, .y))
+    descarga <- purrr::map2(url_descarga, files_path, ~download(.x, .y, mode = "wb"))
 
     files_path <- files_path[as.logical(unlist(descarga) + 1)]
 
@@ -135,7 +135,7 @@ get_impotaciones <- function() {
   download <- purrr::possibly(download.file, otherwise = -1)
 
   # Descargando archivos
-  descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y))
+  descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y, mode = "wb"))
 
   # Filtrando los resultado que tuvieron exito
   files_paths <- files_paths[as.logical(unlist(descarga) + 1)]

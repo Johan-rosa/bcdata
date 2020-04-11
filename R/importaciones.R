@@ -26,7 +26,7 @@ get_importaciones <- function() {
     download <- purrr::possibly(download.file, otherwise = -1)
 
     # Descargando archivos
-    descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y))
+    descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y, mode = "wb"))
 
     # Filtrando los resultado que tuvieron exito
     files_paths <- files_paths[as.logical(unlist(descarga) + 1)]
