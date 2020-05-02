@@ -67,13 +67,14 @@ get_ipc_data <- function(desagregacion = "general"){
         # descarga el archivo
         download.file(url_descarga, file_path, mode = "wb", quiet = TRUE)
 
-        # leer el archivo
-        ipc_general <- readxl::read_excel(
-            file_path,
-            sheet = 1,
-            col_names = FALSE,
-            skip = 7
-        )
+        suppressMessages(
+            # leer el archivo
+            ipc_general <- readxl::read_excel(
+                file_path,
+                sheet = 1,
+                col_names = FALSE,
+                skip = 7)
+            )
 
         # Adecuando el archivo
         ipc_general <- ipc_general %>%
@@ -119,13 +120,14 @@ get_ipc_data <- function(desagregacion = "general"){
             "ipc_bines_servicios", "ipc_bienes_servicios_vm"
         )
 
+        suppressMessages(
         # Importar archivos
         ipc_grupos <- readxl::read_excel(
             file_path,
             skip = 10,
             col_names = F,
             na = "-"
-        )
+        ))
 
         # adecuando el archivo
         ipc_grupos <-
@@ -166,12 +168,13 @@ get_ipc_data <- function(desagregacion = "general"){
         # descarga el archivo
         download.file(url_descarga, file_path, mode = "wb", quiet = TRUE)
 
+        suppressMessages(
         # importar files con ipc por regiones
         ipc_region <- readxl::read_excel(
             file_path,
             skip = 7,
             col_names = F
-        )
+        ))
 
         # adecuando el archivo
         ipc_region <-
@@ -210,12 +213,13 @@ get_ipc_data <- function(desagregacion = "general"){
         # descarga el archivo
         download.file(url_descarga, file_path, mode = "wb", quiet = TRUE)
 
+        suppressMessages(
         # importar el archivo
         ipc_subyacente <- readxl::read_excel(
             file_path,
             skip = 25,
             col_names = F
-        )
+        ))
 
         # adecuar el objeto
         ipc_subyacente <-
@@ -257,12 +261,14 @@ get_ipc_data <- function(desagregacion = "general"){
         # descarga el archivo
         download.file(url_descarga, file_path, mode = "wb", quiet = TRUE)
 
+        suppressMessages(
         # importar archivo
         ipc_tnt <- readxl::read_excel(
             file_path,
             skip = 27,
             col_names = F,
             na = "-"
+        )
         )
 
         # Adecuando el objeto

@@ -12,5 +12,13 @@ Encoding: UTF-8
 LazyData: true
 URL: http:johan-rosa.com
 RoxygenNote: 7.1.0
+Tmports:
+    dplyr
+    tidyr
+    stringr
+    purrr
+    readxl
+    lubridate
+    janitor
 Suggests: 
     testthat

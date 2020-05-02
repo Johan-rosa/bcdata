@@ -12,5 +12,6 @@ Un tibble con la serie de las exportaciones
 \description{
 Esta funcion descarga los archivos con las exportaciones
 dominicanas y los combina para terminar con una serie actualizada
-y desagregada por producto, tipo de producto y regimen de exportacion
+y desagregada por producto, tipo de producto y regimen de exportación.
+El valor de las exportaciones está en millones de RD$.
 }

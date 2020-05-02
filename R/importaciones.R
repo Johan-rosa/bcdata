@@ -2,14 +2,16 @@
 #'
 #' Esta funcion descarga los archivos con las importaciones
 #' dominicanas y los combina para terminar con una serie actualizada
-#' y desagregada por producto, tipo de producto y regimen de importacion
+#' y desagregada por producto, tipo de producto y regimen de importacion.
+#' El valor de las importacion está en millones de RD$
 #'
 #' @return Un tibble con la serie de las importaciones
-#' @usage get_exportaciones()
+#' @usage get_importaciones()
 
 get_importaciones <- function() {
     # Para usar el pipe sin cargar dplyr o magrittr
     `%>%` <- magrittr::`%>%`
+
     # años potenciales
     periodo <- c(2010:lubridate::year(Sys.Date()))
     # Url de descarga para cada anio
@@ -17,6 +19,7 @@ get_importaciones <- function() {
                            "sector-externo/documents/Importaciones_Mensuales_",
                            periodo,
                            "_6.xls?v=1571324085432")
+
     # Creando una ruta temporal para ubicar cada archivo
     files_paths <- purrr::map_chr(
         periodo,
@@ -26,7 +29,9 @@ get_importaciones <- function() {
     download <- purrr::possibly(download.file, otherwise = -1)
 
     # Descargando archivos
-    descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y, mode = "wb", quiet = TRUE))
+    suppressWarnings(
+        descarga <- purrr::map2(url_descarga, files_paths, ~download(.x, .y, mode = "wb", quiet = TRUE))
+    )
 
     # Filtrando los resultado que tuvieron exito
     files_paths <- files_paths[as.logical(unlist(descarga) + 1)]
@@ -60,16 +65,17 @@ get_importaciones <- function() {
         "m_capital_zf", "m_total", "m_nacionales",
         "m_zf", "m_petroleras", "m_no_petroleras")
 
-    # Importando los archivos
-    importaciones <-
-        purrr::map(files_paths,
-                   readxl::read_excel,
-                   sheet = 1,
-                   col_names = TRUE,
-                   skip = 7,
-                   na = "n.d.",
-                   n_max = 60)
-
+    suppressMessages(
+        # Importando los archivos
+        importaciones <-
+            purrr::map(files_paths,
+                       readxl::read_excel,
+                       sheet = 1,
+                       col_names = TRUE,
+                       skip = 7,
+                       na = "n.d.",
+                       n_max = 60)
+        )
     # Adecuar achivos
     importaciones <- importaciones %>%
         purrr::map(
