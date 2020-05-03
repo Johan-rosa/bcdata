@@ -25,7 +25,7 @@ get_tcambio <- function(frecuencia = "diaria") {
     path_tc <- tempfile(pattern = "", fileext = ".xls")
 
     # Descargando el archivo
-    download.file(url_tc, path_tc, mode = "wb")
+    download.file(url_tc, path_tc, mode = "wb", quiet = TRUE)
 
     suppressMessages(
         suppressWarnings(
@@ -64,7 +64,7 @@ get_tcambio <- function(frecuencia = "diaria") {
                 year = lubridate::year(fecha),
                 mes = crear_mes(mes = lubridate::month(fecha))
                 ) %>%
-            dplyr::select(fecha, year, mes, everything())
+            dplyr::select(fecha, year, mes, dplyr::everything())
 
         #Output de la funcion
         return(tc_mensual)

@@ -13,8 +13,9 @@ get_op_interbancaria <- function() {
      file_path <- tempfile(pattern = "", fileext = ".xls")
 
      # Descarga del archivo
-     download.file(web_url, file_path, mode = "wb")
+     download.file(web_url, file_path, mode = "wb", quiet = TRUE)
 
+     suppressMessages(
      # Importando el archivo
      op_interbancaria <- xlsx::read.xlsx(
          file_path,
@@ -22,6 +23,7 @@ get_op_interbancaria <- function() {
          startRow = 29,
          startCol = 2,
          header = FALSE)
+     )
 
      op_interbancaria <-
          op_interbancaria %>%

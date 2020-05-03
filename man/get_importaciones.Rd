@@ -4,7 +4,7 @@
 \alias{get_importaciones}
 \title{Descarga las importaciones dominicanas}
 \usage{
-get_exportaciones()
+get_importaciones()
 }
 \value{
 Un tibble con la serie de las importaciones
@@ -12,5 +12,6 @@ Un tibble con la serie de las importaciones
 \description{
 Esta funcion descarga los archivos con las importaciones
 dominicanas y los combina para terminar con una serie actualizada
-y desagregada por producto, tipo de producto y regimen de importacion
+y desagregada por producto, tipo de producto y regimen de importacion.
+El valor de las importacion está en millones de RD$
 }
