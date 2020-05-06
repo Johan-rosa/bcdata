@@ -67,11 +67,7 @@ get_ipc_data <- function(desagregacion = "general"){
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
         # descarga el archivo
-<<<<<<< HEAD
-        download.file(url_descarga, file_path, quiet = TRUE, mode = "wb")
-=======
         download.file(url_descarga, file_path, mode = "wb", quiet = TRUE)
->>>>>>> 07a04ace5737c08e3fab92844b2810d53448db5e
 
         suppressMessages(
             # leer el archivo
