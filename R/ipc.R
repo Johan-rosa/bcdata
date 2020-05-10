@@ -1,5 +1,7 @@
 
 crear_mes <- function(mes, type = "largo") {
+    # creating the pipe
+    `%>%` <- magrittr::`%>%`
 
     if(is.numeric(mes)){
         dplyr::recode(mes,
