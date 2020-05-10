@@ -138,7 +138,6 @@ get_pib_gasto <- function(modalidad = "nominal", acumulado = FALSE) {
 
     return(pib_gasto)
 
-
 }
 
 
