@@ -268,7 +268,6 @@ get_pib_gasto <- function(modalidad = "nominal", acumulado = FALSE, homogenea_91
 
     return(pib_gasto)
 
-
 }
 
 
