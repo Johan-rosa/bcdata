@@ -13,12 +13,12 @@ LazyData: true
 URL: http:johan-rosa.com
 RoxygenNote: 7.1.0
 Imports:
-    dplyr
-    tidyr
-    stringr
-    purrr
-    readxl
-    lubridate
+    dplyr,
+    tidyr,
+    stringr,
+    purrr,
+    readxl,
+    lubridate,
     janitor
 Suggests: 
     testthat
