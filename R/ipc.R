@@ -4,7 +4,8 @@
 #' con diferentes desagregaciones
 #'
 #' @param desagregacion string indicando la desagregacion deseada. opciones:
-#' "general", "grupos", "regiones", "subyacente", "tnt" (transable y no transable)
+#' "general", "grupos", "regiones", "subyacente", "tnt" (transable y no transable),
+#' "articulos"
 #'
 #' @return Un tibble con las series del ipc con la desagregacion deseada
 #' @examples
@@ -105,7 +106,7 @@ get_ipc_data <- function(desagregacion = "general"){
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha), type = "largo")) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_grupos)
@@ -150,7 +151,7 @@ get_ipc_data <- function(desagregacion = "general"){
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_region)
@@ -196,7 +197,7 @@ get_ipc_data <- function(desagregacion = "general"){
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
             dplyr::select(fecha, year, mes, everything()) %>%
             dplyr::filter(!is.na(ipc_subyacente))
 
@@ -245,10 +246,36 @@ get_ipc_data <- function(desagregacion = "general"){
                             by = "month",
                             length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha))) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_tnt)
+
+    } else if(desagregacion == "articulos"){
+
+        #articulos_detalle <- read_rds("data/articulos_detalles.rds")
+
+        url <- "https://cdn.bancentral.gov.do/documents/estadisticas/precios/documents/ipc_articulos_base_2010.xlsx"
+
+        temp_path <- tempfile(fileext = ".xlsx")
+
+        download.file(url, temp_path, mode = "wb", quiet = TRUE)
+
+        sheets <- stringr::str_subset(readxl::excel_sheets(temp_path), "METADATOS", negate = TRUE)
+
+        ipc_articulos_long <- purrr::map(
+            sheets,
+            ~suppressMessages(readxl::read_excel(temp_path, sheet = .x, skip = 4)) %>%
+                janitor::remove_empty(which = "cols") %>%
+                janitor::clean_names() %>%
+                dplyr::rename(name = x1, ponderador = x2) %>%
+                tidyr::pivot_longer(-c(name, ponderador), names_to = "mes", values_to = "indice")
+        ) %>%
+            setNames(readr::parse_number(sheets)) %>%
+            dplyr::bind_rows(.id = "year") %>%
+            dplyr::left_join(articulos_detalle, by = c("name" = "nombre", "ponderador"))
+
+        return(ipc_articulos_long)
 
     }
 
