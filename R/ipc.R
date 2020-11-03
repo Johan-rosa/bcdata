@@ -13,8 +13,6 @@
 #' get_ipc_data(desagregacion = "grupos")
 #' get_ipc_data(desagregacion = "regiones")
 
-
-
 # Funcion para descargar data del IPC
 get_ipc_data <- function(desagregacion = "general"){
 
@@ -268,12 +266,13 @@ get_ipc_data <- function(desagregacion = "general"){
             ~suppressMessages(readxl::read_excel(temp_path, sheet = .x, skip = 4)) %>%
                 janitor::remove_empty(which = "cols") %>%
                 janitor::clean_names() %>%
-                dplyr::rename(name = x1, ponderador = x2) %>%
-                tidyr::pivot_longer(-c(name, ponderador), names_to = "mes", values_to = "indice")
+                dplyr::rename(nombre = x1, ponderador = x2) %>%
+                dplyr::bind_cols(dplyr::select(dplyr::ungroup(articulos_detalle), division)) %>%
+                tidyr::pivot_longer(cols = -c(nombre, ponderador, division),
+                                    names_to = "mes", values_to = "indice")
         ) %>%
             setNames(readr::parse_number(sheets)) %>%
-            dplyr::bind_rows(.id = "year") %>%
-            dplyr::left_join(articulos_detalle, by = c("name" = "nombre", "ponderador"))
+            dplyr::bind_rows(.id = "year")
 
         return(ipc_articulos_long)
 
