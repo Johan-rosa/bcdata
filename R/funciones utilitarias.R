@@ -7,8 +7,6 @@ rescale <- function(x, new_min = 0, new_max = 1){
     return(new_value)
 }
 
-
-
 # Crea mes ----------------------------------------------------------------
 
 crear_mes <- function(mes, type = "text_to_number") {
@@ -53,7 +51,7 @@ crear_mes <- function(mes, type = "text_to_number") {
 
     if(type == "text_to_number"){
 
-        mes  <-  str_to_title(mes)
+        mes  <-  stringr::str_to_title(mes)
 
         new_mes <- dplyr::recode(mes,
                                  "Ene" = 01,
@@ -100,3 +98,8 @@ crear_mes <- function(mes, type = "text_to_number") {
 }
 
 
+# Labels for date axis ----------------------------------------------------
+
+date_label <- function(date = Sys.Date()) {
+    paste(stringr::str_to_title(lubridate::month(date, label = TRUE)), lubridate::year(date))
+}
