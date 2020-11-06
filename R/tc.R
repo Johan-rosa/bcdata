@@ -40,9 +40,9 @@ get_tcambio <- function(frecuencia = "diaria") {
             setNames(
                 c("year", "mes", "dia","tcn_compra", "tcn_venta")
             ) %>%
-            dplyr::mutate(mes = crear_mes(mes, "corto"),
-                   fecha = lubridate::ymd(paste(year, mes, dia, sep = "-")),
-                   mes = crear_mes(mes = mes)) %>%
+            dplyr::mutate(
+                mes = bcdata::crear_mes(mes, "text_to_number"),
+                   fecha = lubridate::ymd(paste(year, mes, dia, sep = "-"))) %>%
             dplyr::select(fecha, year, mes, everything())
 
         # Output de la funcion
@@ -61,8 +61,7 @@ get_tcambio <- function(frecuencia = "diaria") {
                 fecha = seq(as.Date("1992/2/1"),
                             by = "month",
                             length.out = length(year)),
-                year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha))
+                year = lubridate::year(fecha)
                 ) %>%
             dplyr::select(fecha, year, mes, dplyr::everything())
 
