@@ -66,7 +66,7 @@ get_tasas_bm <- function(tipo = 'pasivas') {
                                     length.out = length(tp_30d)),
                    year = lubridate::year(fecha),
                    mes = lubridate::month(fecha),
-                   mes = crear_mes(mes)) %>%
+                   mes = crear_mes(mes, "number_to_text")) %>%
             dplyr::select(fecha, year, mes, dplyr::everything())
 
 
@@ -193,7 +193,7 @@ get_tasas_bm <- function(tipo = 'pasivas') {
                                  by = "month",
                                  length.out = length(ta_90d)),
                year = lubridate::year(fecha),
-               mes = crear_mes(lubridate::month(fecha))
+               mes = crear_mes(lubridate::month(fecha), "number_to_text")
                    ) %>%
             dplyr::select(fecha, year, mes, everything())
 
