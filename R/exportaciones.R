@@ -80,7 +80,7 @@ get_exportaciones <- function() {
                 #setNames(header_exportaciones) %>%
                 dplyr::select(-x1, -dplyr::last_col()) %>%
                 dplyr::rename(detalle1 = x2) %>%
-                tidyr::drop_na() %>%
+                dplyr::filter(!is.na(detalle1)) %>%
                 dplyr::mutate(detalle = header_exportaciones) %>%
                 tidyr::gather('mes', "valor_expor", -detalle, -detalle1)
         ) %>%
@@ -110,7 +110,8 @@ get_exportaciones <- function() {
                                     "zf" = "Zonas francas")
             ) %>%
       dplyr::select(-detalle) %>%
-      dplyr::rename(detalle = detalle1)
+      dplyr::rename(detalle = detalle1) %>%
+      dplyr::filter(!is.na(valor_expor), valor_expor != 0)
 
         return(exportaciones)
 
