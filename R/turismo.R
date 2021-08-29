@@ -102,7 +102,7 @@ get_turistas <- function() {
 
     url <- paste0('https://cdn.bancentral.gov.do/',
                  'documents/estadisticas/sector-turismo/',
-                 'documents/lleg_caracteristicas_', 2006:2020
+                 'documents/lleg_caracteristicas_', 2006:2021
                  ,'.xls')
     `%>%` <- magrittr::`%>%`
 
@@ -159,7 +159,7 @@ data_turistas <- purrr::map_df(
     detalles_year
 )
 
-
+return(data_turistas)
 }
 
 data_turistas <- get_turistas()
