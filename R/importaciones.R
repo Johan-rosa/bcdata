@@ -8,7 +8,7 @@
 #' @return Un tibble con la serie de las importaciones
 #' @usage get_importaciones()
 
-get_importaciones <- function() {
+get_importaciones <- function(frecuencia = 'mensual') {
     # Para usar el pipe sin cargar dplyr o magrittr
     `%>%` <- magrittr::`%>%`
 
@@ -72,12 +72,12 @@ get_importaciones <- function() {
                        readxl::read_excel,
                        sheet = 1,
                        col_names = TRUE,
-                       skip = 7,
+                       skip = 8,
                        na = "n.d.",
                        n_max = 60)
         )
     # Adecuar achivos
-    importaciones <- importaciones %>%
+    importaciones1 <- importaciones %>%
         purrr::map(
             ~.x %>%
                 janitor::clean_names() %>%
@@ -85,7 +85,7 @@ get_importaciones <- function() {
                 #setNames(header_exportaciones) %>%
                 dplyr::select(-x1, -dplyr::last_col()) %>%
                 dplyr::rename(detalle1 = x2) %>%
-                tidyr::drop_na() %>%
+                tidyr::drop_na(detalle1) %>%
                 dplyr::mutate(detalle = header_importaciones) %>%
                 tidyr::gather('mes', "valor_expor", -detalle, -detalle1)
         ) %>%
@@ -93,9 +93,25 @@ get_importaciones <- function() {
         dplyr::bind_rows(.id = "year") %>%
         dplyr::select(detalle, detalle1, year, mes, dplyr::everything()) %>%
         dplyr::mutate(
+            mes1 = dplyr::recode(mes,
+                                 'ene' = '01',
+                                 'feb' = '02',
+                                 'mar' = '03',
+                                 'abr' = '04',
+                                 'may' = '05',
+                                 'jun' = '06',
+                                 'jul' = '07',
+                                 'ago' = '08',
+                                 'sep' = '09',
+                                 'oct' = '10',
+                                 'nov' = '11',
+                                 'dic' = '12'),
+            fecha = as.Date(paste(year, mes1, '1', sep = '-')),
+            trimestre = lubridate::quarter(fecha, with_year = TRUE),
             grupo = stringr::str_extract(detalle, "consumo|materias_primas|capital"),
             regimen = stringr::str_extract(detalle, "nac|zf"),
             regimen = ifelse(is.na(regimen), "nac", regimen)) %>%
+        dplyr::select(-mes, -mes1) %>% 
         tidyr::fill(grupo) %>%
         dplyr::filter(!detalle %in% c("m_consumo", "m_materias_primas", "m_materias_primas_nac_",
                                       "m_materias_primas_zf", "m_capital_", "m_capital_nac_",
@@ -117,6 +133,22 @@ get_importaciones <- function() {
         ) %>%
         dplyr::select(-detalle) %>%
         dplyr::rename(detalle = detalle1)
+    
+    if(frecuencia == 'trimestral'){
+        importaciones <- importaciones1 %>% 
+            dplyr::select(-fecha) %>% 
+            dplyr::group_by(year, regimen, grupo, trimestre, detalle) %>% 
+            dplyr::summarize(valor_expor = sum(valor_expor)) %>% 
+            suppressMessages()
+    } else if(frecuencia == 'anual'){
+        importaciones <- importaciones1 %>% 
+            dplyr::select(-fecha, - trimestre) %>% 
+            dplyr::group_by(year, regimen, grupo, detalle) %>% 
+            dplyr::summarize(valor_expor = sum(valor_expor)) %>% 
+            suppressMessages()
+    } else {
+        importaciones <- importaciones1
+    }
 
     return(importaciones)
 

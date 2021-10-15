@@ -8,7 +8,7 @@
 #' @return Un tibble con la serie de las exportaciones
 #' @usage get_exportaciones()
 
-get_exportaciones <- function() {
+get_exportaciones <- function(frecuencia = 'mensual') {
 
     `%>%` <- magrittr::`%>%`
 
@@ -66,13 +66,13 @@ get_exportaciones <- function() {
         exportaciones <- purrr::map(
             files_path,
             readxl::read_excel, sheet = 1,
-            col_names = TRUE, skip = 7, na = "n.d.",
+            col_names = TRUE, skip = 8, na = "n.d.",
             n_max = 70) %>%
             setNames(periodo[as.logical(unlist(descarga) + 1)])
       )
     )
 
-    exportaciones <- exportaciones %>%
+    exportaciones1 <- exportaciones %>%
         purrr::map(
             ~.x %>%
                 janitor::clean_names() %>%
@@ -80,16 +80,32 @@ get_exportaciones <- function() {
                 #setNames(header_exportaciones) %>%
                 dplyr::select(-x1, -dplyr::last_col()) %>%
                 dplyr::rename(detalle1 = x2) %>%
-                dplyr::filter(!is.na(detalle1)) %>%
+                tidyr::drop_na(detalle1) %>%
                 dplyr::mutate(detalle = header_exportaciones) %>%
                 tidyr::gather('mes', "valor_expor", -detalle, -detalle1)
         ) %>%
         dplyr::bind_rows(.id = "year") %>%
         dplyr::select(detalle1, detalle, year, mes, dplyr::everything()) %>%
         dplyr::mutate(
+            mes1 = dplyr::recode(mes,
+                                 'ene' = '01',
+                                 'feb' = '02',
+                                 'mar' = '03',
+                                 'abr' = '04',
+                                 'may' = '05',
+                                 'jun' = '06',
+                                 'jul' = '07',
+                                 'ago' = '08',
+                                 'sep' = '09',
+                                 'oct' = '10',
+                                 'nov' = '11',
+                                 'dic' = '12'),
+            fecha = as.Date(paste(year, mes1, '1', sep = '-')),
+            trimestre = lubridate::quarter(fecha, with_year = TRUE),
             grupo = stringr::str_extract(detalle, "agro|minerales|ind|bienes_puerto"),
             regimen = stringr::str_extract(detalle, "nac|zf"),
             regimen = ifelse(is.na(regimen), "nac", regimen)) %>%
+        dplyr::select(-mes, -mes1) %>% 
         tidyr::fill(grupo) %>%
         dplyr::filter(!detalle %in% c("x_total", "x_nac", "x_zf", "x_minerales", "x_agro",
                                "x_agro_nacionales", "x_agro_zf", "x_ind", "x_ind_nac",
@@ -110,10 +126,24 @@ get_exportaciones <- function() {
                                     "zf" = "Zonas francas")
             ) %>%
       dplyr::select(-detalle) %>%
-      dplyr::rename(detalle = detalle1) %>%
-      dplyr::filter(!is.na(valor_expor), valor_expor != 0)
+      dplyr::rename(detalle = detalle1)
 
+    if(frecuencia == 'trimestral'){
+      exportaciones <- exportaciones1 %>% 
+        dplyr::select(-fecha) %>% 
+        dplyr::group_by(year, regimen, grupo, trimestre, detalle) %>% 
+        dplyr::summarize(valor_expor = sum(valor_expor)) %>% 
+        suppressMessages()
+    } else if(frecuencia == 'anual'){
+      exportaciones <- exportaciones1 %>% 
+        dplyr::select(-fecha, - trimestre) %>% 
+        dplyr::group_by(year, regimen, grupo, detalle) %>% 
+        dplyr::summarize(valor_expor = sum(valor_expor)) %>% 
+        suppressMessages()
+    } else {
+      exportaciones <- exportaciones1
+    }
+    
         return(exportaciones)
 
 }
-
