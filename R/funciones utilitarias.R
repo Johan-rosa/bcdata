@@ -54,6 +54,7 @@ crear_mes <- function(mes, type = "text_to_number") {
         mes  <-  stringr::str_to_title(mes)
 
         new_mes <- dplyr::recode(mes,
+                                 "Jan" = 01,
                                  "Ene" = 01,
                                  "Feb" = 02,
                                  "Mar" = 03,
@@ -63,6 +64,7 @@ crear_mes <- function(mes, type = "text_to_number") {
                                  "Jul" = 07,
                                  "Ago" = 08,
                                  "Sep" = 09,
+                                 "Sept" = 09,
                                  "Oct" = 10,
                                  "Nov" = 11,
                                  "Dic" = 12,
