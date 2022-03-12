@@ -20,10 +20,11 @@ get_ipc_data <- function(desagregacion = "general"){
     `%>%` <- magrittr::`%>%`
 
     if(desagregacion == "general") {
+
         # Descarga el ipc general  ---------------------------
         url_descarga <- paste0("https://cdn.bancentral.gov.do/documents/",
                                "estadisticas/precios/documents/",
-                               "ipc_base_2010.xls?v=1570116997757")
+                               "ipc_base_2019-2020.xls")
         # directorio de descarga
         file_path <- tempfile(pattern = "", fileext = ".xls")
 
@@ -62,7 +63,7 @@ get_ipc_data <- function(desagregacion = "general"){
         # IPC por grupo de bienes y servicios ------------------------------------------
         url_descarga <- paste0(
             "https://cdn.bancentral.gov.do/documents/estadisticas/",
-            "precios/documents/ipc_grupos_base_2010.xls?v=1570117393117"
+            "precios/documents/ipc_grupos_base_2019-2020.xls"
         )
 
         # directorio de descarga
@@ -122,7 +123,7 @@ get_ipc_data <- function(desagregacion = "general"){
         url_descarga <-  paste0(
             "https://cdn.bancentral.gov.do/",
             "documents/estadisticas/precios/documents/",
-            "ipc_regiones_base_2010.xls?v=1570117393117"
+            "ipc_regiones_base_2019-2020.xls"
         )
 
         # ruta del archivo
@@ -167,7 +168,7 @@ get_ipc_data <- function(desagregacion = "general"){
         url_descarga <- paste0(
             "https://cdn.bancentral.gov.do/documents/",
             "estadisticas/precios/documents/",
-            "ipc_subyacente_base_2010.xlsx?v=1570117393117"
+            "ipc_subyacente_base_2019-2020.xlsx"
         )
 
         # ruta del archivo
@@ -215,7 +216,7 @@ get_ipc_data <- function(desagregacion = "general"){
         url_descarga <- paste0(
             "https://cdn.bancentral.gov.do/",
             "documents/estadisticas/precios/",
-            "documents/ipc_tnt_base_2010.xls?v=1570117393117"
+            "documents/ipc_tnt_base_2019-2020.xls"
         )
 
         # ruta del archivo
@@ -253,7 +254,7 @@ get_ipc_data <- function(desagregacion = "general"){
 
         #articulos_detalle <- read_rds("data/articulos_detalles.rds")
 
-        url <- "https://cdn.bancentral.gov.do/documents/estadisticas/precios/documents/ipc_articulos_base_2010.xlsx"
+        url <- "https://cdn.bancentral.gov.do/documents/estadisticas/precios/documents/ipc_articulos_base_2019-2020.xlsx"
 
         temp_path <- tempfile(fileext = ".xlsx")
 
