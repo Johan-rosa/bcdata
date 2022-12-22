@@ -21,6 +21,7 @@ get_em_eem <- function(medida = "promedio" # promedio, mediana y
     download.file(file_url, file_path, mode = "wb", quiet = TRUE)
 
     # hojas del libro
+    medida <- tolower(medida)
     medida <- dplyr::case_when(
         medida == "promedio" ~ "Promedio",
         medida == "mediana" ~ "Mediana",
@@ -119,4 +120,4 @@ get_em_eoe <- function(temporalidad = "mensual"){
   }
 }
 
-get_em_eoe("trimestral")
+
