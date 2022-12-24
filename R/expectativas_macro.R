@@ -68,7 +68,7 @@ get_em_eem <- function(medida = "promedio" # promedio, mediana y
 
 
 get_em_eoe <- function(temporalidad = "mensual"){
-
+  temporalidad <- tolower(temporalidad)
   # Ajuste para usar el pipe sin cargar dplyr
   `%>%` <- magrittr::`%>%`
 
@@ -93,14 +93,22 @@ get_em_eoe <- function(temporalidad = "mensual"){
   if(temporalidad == "mensual"){
 
   # archivo mesual
-  opinion_empresarial_mensual <- readxl::read_excel(file_path,
-                                     skip = 6,
-                                     col_types = c('numeric', 'guess',
-                                                   rep('numeric', 11))) %>%
-    janitor::clean_names() %>%
-    # dplyr::mutate(periodo = lubridate::make_date(ano, mes))
-    # dplyr::select(periodo, "año" = ano  ) %>%
-    suppressMessages()
+  opinion_empresarial_mensual <-
+      readxl::read_excel(file_path,
+                         skip = 6,
+                         col_types = c('numeric', 'guess',
+                                       rep('numeric', 11))) %>%
+      setNames(c( "year", "mes", "situacion_economica", "nivel_de_inventario",
+                  "produccion", "pedidos", "empleo", "expectativa_produccion",
+                  "expectativa_precios", "expectativa_situacion_economica",
+                  "expectativa_empleo", "indice_de_confianza_industrial",
+                  "indice_de_clima_empresarial")) %>%
+      dplyr::mutate(
+          mes = bcdata::crear_mes(mes),
+          year = as.numeric(year),
+          periodo = lubridate::make_date(year = year, month = mes, "01")) %>%
+      dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) %>%
+      suppressMessages()
 
   return(opinion_empresarial_mensual)
   }
@@ -112,12 +120,46 @@ get_em_eoe <- function(temporalidad = "mensual"){
                                             skip = 4,
                                             col_types = c('guess',
                                                           rep('numeric', 19))) %>%
-    janitor::clean_names() %>%
-    # dplyr::filter(!is.na(produccion_respecto_al_trimestre_anterior)) %>%
-    suppressMessages()
+        janitor::clean_names() %>%
+        dplyr::mutate(year = ifelse(stringr::str_detect(periodo, '^[0-9]+$'), periodo, NA)) %>%
+        tidyr::fill(year) %>%
+        dplyr::filter(!is.na(produccion_respecto_al_trimestre_anterior)) %>%
+        dplyr::mutate(
+            year = as.numeric(year),
+            trimestre = tolower(periodo),
+            trimestre = dplyr::case_when(
+                trimestre == "ene-mar"  ~ "T1",
+                trimestre == "abr-jun"  ~ "T2",
+                trimestre == "jul-sept" ~ "T3",
+                trimestre == "oct-dic"  ~ "T4"
+            ),
+            periodo = paste(trimestre, year, sep = "-")) %>%
+        dplyr::select(periodo,
+        produccion_igual_trimestre_ano_anterior:indice_de_clima_empresarial_ice) %>%
+    suppressMessages ()
 
   return(opinion_empresarial_trimestral)
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
