@@ -81,8 +81,6 @@ get_em_eoe <- function(temporalidad = "mensual"){
                      "politica-monetaria/expectativas-macroeconomicas/",
                      periocidad)
 
-
-
   # Directorio
   file_path <- tempfile(pattern = "", fileext = "")
 
@@ -90,11 +88,9 @@ get_em_eoe <- function(temporalidad = "mensual"){
   download.file(file_url, file_path, mode = "wb", quiet = TRUE)
 
 
-  if(temporalidad == "mensual"){
-
   # archivo mesual
-  opinion_empresarial_mensual <-
-      readxl::read_excel(file_path,
+  if(temporalidad == "mensual"){
+   opinion_empresarial_mensual<-  readxl::read_excel(file_path,
                          skip = 6,
                          col_types = c('numeric', 'guess',
                                        rep('numeric', 11))) %>%
@@ -110,13 +106,16 @@ get_em_eoe <- function(temporalidad = "mensual"){
       dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) %>%
       suppressMessages()
 
-  return(opinion_empresarial_mensual)
-  }
 
-  # archivo trimestral
-  else if (temporalidad == "trimestral"){
+   print("datos mensual")
+   return(opinion_empresarial_mensual)
 
-    opinion_empresarial_trimestral <- readxl::read_excel(file_path,
+
+  } else if (!temporalidad == "mensual"){
+
+
+  # datos trimestral
+   opinion_empresarial_trimestral <- readxl::read_excel(file_path,
                                             skip = 4,
                                             col_types = c('guess',
                                                           rep('numeric', 19))) %>%
@@ -138,7 +137,8 @@ get_em_eoe <- function(temporalidad = "mensual"){
         produccion_igual_trimestre_ano_anterior:indice_de_clima_empresarial_ice) %>%
     suppressMessages ()
 
-  return(opinion_empresarial_trimestral)
+   print("datos trimestral")
+   return(opinion_empresarial_trimestral)
   }
 }
 
