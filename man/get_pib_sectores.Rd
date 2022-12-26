@@ -25,3 +25,10 @@ Descarga las series del PIB por sectores de origen,
 con diferentes alternativas según las metodolog\\u00edas
 y opciones de presentaci\\u00f3n de resultados.
 }
+\examples{
+# PIB nominal por sectores de origen, serie trimestral desde 1991, base 2007
+get_pib_sectores(modalidad = "nominal", acumulado = FALSE, homogenea_91 = TRUE)
+# PIB real por sectores de origen, serie trimestral desde 1991, base 2007
+get_pib_sectores(modalidad = "nominal", acumulado = FALSE, homogenea_91 = TRUE)
+
+}

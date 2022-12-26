@@ -3,3 +3,4 @@
 ^bcdata\.Rcheck$
 ^bcdata.*\.tar\.gz$
 ^bcdata.*\.tgz$
+^\.github$

@@ -8,7 +8,8 @@ get_ipc_data(desagregacion = "general")
 }
 \arguments{
 \item{desagregacion}{string indicando la desagregacion deseada. opciones:
-"general", "grupos", "regiones", "subyacente", "tnt" (transable y no transable)}
+"general", "grupos", "regiones", "subyacente", "tnt" (transable y no transable),
+"articulos"}
 }
 \value{
 Un tibble con las series del ipc con la desagregacion deseada

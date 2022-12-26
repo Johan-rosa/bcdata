@@ -14,7 +14,10 @@
 #' get_ipc_data(desagregacion = "regiones")
 
 # Funcion para descargar data del IPC
-get_ipc_data <- function(desagregacion = "general"){
+get_ipc_data <- function(
+        desagregacion = c("general", "grupos", "regiones", "subyacente", "tnt")
+    ) {
+    desagregacion <- match.arg(desagregacion)
 
     # Asignando el pipe para usarlo sin cargar dplyr
     `%>%` <- magrittr::`%>%`
