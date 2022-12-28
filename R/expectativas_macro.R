@@ -108,7 +108,7 @@ get_em_eoe <- function(mensual = TRUE){
       dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) |>
       suppressMessages()
   
-  print(datos mensual)
+  print("datos mensual")
   return(opinion_empresarial_mensual)
   }
 
@@ -138,7 +138,7 @@ get_em_eoe <- function(mensual = TRUE){
     suppressMessages ()
   
     
-  print(datos trimestral)
+  print("datos trimestral")
   return(opinion_empresarial_trimestral)
 
   }
