@@ -6,8 +6,7 @@
 get_em_eem <- function(medida = "promedio" # promedio, mediana y
                                            # dv (desviación estándar)
                                ){
-    # Ajuste para usar el pipe sin cargar dplyr
-    `%>%` <- magrittr::`%>%`
+
 
     # Enlace
     file_url <- paste0("https://cdn.bancentral.gov.do/documents/",
@@ -53,8 +52,8 @@ get_em_eem <- function(medida = "promedio" # promedio, mediana y
                                                      'tpm_mes_actual',
                                                      'tpm_trimestre_actual',
                                                      'tpm_año_actual',
-                                                     'tpm_12_meses')) %>%
-        dplyr::mutate(periodo = lubridate::make_date(año, mes)) %>%
+                                                     'tpm_12_meses')) |>
+        dplyr::mutate(periodo = lubridate::make_date(año, mes)) |>
       dplyr::select(periodo, año:tpm_12_meses)
 
 
@@ -67,13 +66,12 @@ get_em_eem <- function(medida = "promedio" # promedio, mediana y
 
 
 
-get_em_eoe <- function(temporalidad = "mensual"){
+get_em_eoe <- function(mensual = TRUE){
   temporalidad <- tolower(temporalidad)
-  # Ajuste para usar el pipe sin cargar dplyr
-  `%>%` <- magrittr::`%>%`
+
 
   # Enlace
-  periocidad <- ifelse(temporalidad == "mensual",
+  periocidad <- ifelse(mensual,
                        "documents/Historico-EOE-(Mensual).xlsx?v=1670985585615",
                        "documents/Historico-EOE-(Trimestral).xlsx?v=1670985585615")
 
@@ -90,40 +88,41 @@ get_em_eoe <- function(temporalidad = "mensual"){
   download.file(file_url, file_path, mode = "wb", quiet = TRUE)
 
 
-  if(temporalidad == "mensual"){
+  if(mensual){
 
   # archivo mesual
   opinion_empresarial_mensual <-
       readxl::read_excel(file_path,
                          skip = 6,
                          col_types = c('numeric', 'guess',
-                                       rep('numeric', 11))) %>%
+                                       rep('numeric', 11))) |>
       setNames(c( "year", "mes", "situacion_economica", "nivel_de_inventario",
                   "produccion", "pedidos", "empleo", "expectativa_produccion",
                   "expectativa_precios", "expectativa_situacion_economica",
                   "expectativa_empleo", "indice_de_confianza_industrial",
-                  "indice_de_clima_empresarial")) %>%
+                  "indice_de_clima_empresarial")) |>
       dplyr::mutate(
           mes = bcdata::crear_mes(mes),
           year = as.numeric(year),
-          periodo = lubridate::make_date(year = year, month = mes, "01")) %>%
-      dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) %>%
+          periodo = lubridate::make_date(year = year, month = mes, "01")) |>
+      dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) |>
       suppressMessages()
-
+  
+  print(datos mensual)
   return(opinion_empresarial_mensual)
   }
 
   # archivo trimestral
-  else if (temporalidad == "trimestral"){
+  else if (!mensual){
 
     opinion_empresarial_trimestral <- readxl::read_excel(file_path,
                                             skip = 4,
                                             col_types = c('guess',
-                                                          rep('numeric', 19))) %>%
-        janitor::clean_names() %>%
-        dplyr::mutate(year = ifelse(stringr::str_detect(periodo, '^[0-9]+$'), periodo, NA)) %>%
-        tidyr::fill(year) %>%
-        dplyr::filter(!is.na(produccion_respecto_al_trimestre_anterior)) %>%
+                                                          rep('numeric', 19))) |>
+        janitor::clean_names() |>
+        dplyr::mutate(year = ifelse(stringr::str_detect(periodo, '^[0-9]+$'), periodo, NA)) |>
+        tidyr::fill(year) |>
+        dplyr::filter(!is.na(produccion_respecto_al_trimestre_anterior)) |>
         dplyr::mutate(
             year = as.numeric(year),
             trimestre = tolower(periodo),
@@ -133,12 +132,15 @@ get_em_eoe <- function(temporalidad = "mensual"){
                 trimestre == "jul-sept" ~ "T3",
                 trimestre == "oct-dic"  ~ "T4"
             ),
-            periodo = paste(trimestre, year, sep = "-")) %>%
+            periodo = paste(trimestre, year, sep = "-")) |>
         dplyr::select(periodo,
-        produccion_igual_trimestre_ano_anterior:indice_de_clima_empresarial_ice) %>%
+        produccion_igual_trimestre_ano_anterior:indice_de_clima_empresarial_ice) |>
     suppressMessages ()
-
+  
+    
+  print(datos trimestral)
   return(opinion_empresarial_trimestral)
+
   }
 }
 
