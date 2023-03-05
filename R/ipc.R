@@ -88,22 +88,22 @@ get_ipc_data <- function(desagregacion = "general"){
         # Importar archivos
         ipc_grupos <- readxl::read_excel(
             file_path,
-            skip = 10,
+            skip = 7,
             col_names = F,
             na = "-"
         ))
 
         # adecuando el archivo
-        ipc_grupos <-
-            ipc_grupos %>%
+        ipc_grupos <- ipc_grupos %>%
             janitor::clean_names() %>%
             dplyr::select(x1:x25) %>%
             setNames(header_ipc_grupos) %>%
             dplyr::filter(!is.na(ipc_ayb)) %>%
             dplyr::mutate(
-                fecha = seq(lubridate::ymd('1999/01/01'),
-                            by = "month",
-                            length.out = nrow(.)),
+                fecha = seq(
+                    lubridate::ymd('1999/01/01'),
+                    by = "month",
+                    length.out = nrow(.)),
                 year = lubridate::year(fecha),
                 mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
             dplyr::select(fecha, year, mes, everything())
