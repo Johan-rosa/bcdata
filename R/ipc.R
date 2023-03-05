@@ -181,14 +181,15 @@ get_ipc_data <- function(desagregacion = "general"){
         # importar el archivo
         ipc_subyacente <- readxl::read_excel(
             file_path,
-            skip = 25,
-            col_names = F
+            skip = 30,
+            col_names = F, na = "-"
         ))
 
         # adecuar el objeto
         ipc_subyacente <-
             ipc_subyacente %>%
             janitor::clean_names() %>%
+            dplyr::filter(!is.na(x3)) %>%
             dplyr::select(x1:x6) %>%
             setNames(header_ipc_subyacente) %>%
             dplyr::mutate(
@@ -229,7 +230,7 @@ get_ipc_data <- function(desagregacion = "general"){
         # importar archivo
         ipc_tnt <- readxl::read_excel(
             file_path,
-            skip = 27,
+            skip = 31,
             col_names = F,
             na = "-"
         )
@@ -241,11 +242,14 @@ get_ipc_data <- function(desagregacion = "general"){
             setNames(header_ipc_tnt) %>%
             dplyr::filter(!is.na(mes)) %>%
             dplyr::mutate(
-                fecha = seq(lubridate::ymd('1999/02/01'),
-                            by = "month",
-                            length.out = nrow(.)),
+                fecha = seq(
+                    lubridate::ymd('1999/02/01'),
+                    by = "month",
+                    length.out = nrow(.)),
                 year = lubridate::year(fecha),
-                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text")) %>%
+                mes = crear_mes(mes = lubridate::month(fecha), type = "number_to_text"),
+                dplyr::across(dplyr::starts_with("ipc"), as.numeric)
+                ) %>%
             dplyr::select(fecha, year, mes, everything())
 
         return(ipc_tnt)
