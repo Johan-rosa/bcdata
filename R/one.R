@@ -1,7 +1,16 @@
 get_icdv <- function() {
+
+    # # Índice de Costos Directos de la Construcción de Viviendas
+    # icdv:    Índice general
+    # icdv_vm: Variación mensual
+    # icdv_d:  Variación año corrido
+    # icdv_vi: Variación doce meses
+
   `%>%` <- magrittr::`%>%`
+
   # URL del ICDV
-  icdv_general_url <- rvest::read_html('https://www.one.gob.do/datos-y-estadisticas/temas/estadisticas-economicas/precios/icdv/') %>%
+  icdv_general_url <- rvest::read_html(
+      'https://www.one.gob.do/datos-y-estadisticas/temas/estadisticas-economicas/precios/icdv/') %>%
     rvest::html_node('a[href*="1-icdv-general"]') %>%
     rvest::html_attr('href') %>%
     stringr::str_replace('según', 'seg%C3%BAn') %>%
