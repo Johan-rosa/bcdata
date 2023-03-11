@@ -5,12 +5,8 @@
 
 get_em_eem <- function(medida = "promedio" # promedio, mediana y
                                            # dv (desviación estándar)
-<<<<<<< HEAD
     ){
-=======
-                               ){
 
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
 
     # Enlace
     file_url <- paste0("https://cdn.bancentral.gov.do/documents/",
@@ -68,53 +64,29 @@ get_em_eem <- function(medida = "promedio" # promedio, mediana y
 
 # Encuesta de opinión empresarial ----
 
-<<<<<<< HEAD
-
-
 get_em_eoe <- function(mensual = TRUE){
 
 
-=======
-get_em_eoe <- function(mensual = TRUE){
-  
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
   # Enlace
   periocidad <- ifelse(mensual,
                        "documents/Historico-EOE-(Mensual).xlsx?v=1670985585615",
                        "documents/Historico-EOE-(Trimestral).xlsx?v=1670985585615")
-  
+
   file_url <- paste0("https://cdn.bancentral.gov.do/documents/",
                      "politica-monetaria/expectativas-macroeconomicas/",
                      periocidad)
-<<<<<<< HEAD
 
-=======
-  
-  
-  
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
   # Directorio
   file_path <- tempfile(pattern = "", fileext = "")
-  
+
   # Descarga archivo
   download.file(file_url, file_path, mode = "wb", quiet = TRUE)
-<<<<<<< HEAD
-
 
   # archivo mesual
   if(mensual){
    opinion_empresarial_mensual<-  readxl::read_excel(file_path,
-=======
-  
-  
-  if(mensual){
-    
-    # archivo mesual
-    opinion_empresarial_mensual <-
-      readxl::read_excel(file_path,
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
-                         skip = 6,
-                         col_types = c('numeric', 'guess',
+                                                     skip = 6,
+                                                     col_types = c('numeric', 'guess',
                                        rep('numeric', 11))) |>
       setNames(c( "year", "mes", "situacion_economica", "nivel_de_inventario",
                   "produccion", "pedidos", "empleo", "expectativa_produccion",
@@ -122,23 +94,16 @@ get_em_eoe <- function(mensual = TRUE){
                   "expectativa_empleo", "indice_de_confianza_industrial",
                   "indice_de_clima_empresarial")) |>
       dplyr::mutate(
-<<<<<<< HEAD
-          mes = bcdata::crear_mes(mes),
-          year = as.numeric(year),
-          periodo = lubridate::make_date(year = year, month = mes, "01")) |>
-=======
         mes = bcdata::crear_mes(mes),
         year = as.numeric(year),
         periodo = lubridate::make_date(year = year, month = mes, "01")) |>
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
       dplyr::select(periodo, situacion_economica:indice_de_clima_empresarial) |>
       suppressMessages()
-    
+
     fecha <- tail(opinion_empresarial_mensual$periodo, n = 1)
     print("datos mensual")
     print(paste("Fecha", fecha))
 
-<<<<<<< HEAD
 
    print("datos mensual")
    return(opinion_empresarial_mensual)
@@ -172,13 +137,11 @@ get_em_eoe <- function(mensual = TRUE){
 
    print("datos trimestral")
    return(opinion_empresarial_trimestral)
-=======
-    return(opinion_empresarial_mensual)
   }
-  
+
   # archivo trimestral
   else if (!mensual){
-    
+
     opinion_empresarial_trimestral <- readxl::read_excel(file_path,
                                                          skip = 4,
                                                          col_types = c('guess',
@@ -200,33 +163,11 @@ get_em_eoe <- function(mensual = TRUE){
       dplyr::select(periodo,
                     produccion_igual_trimestre_ano_anterior:indice_de_clima_empresarial_ice) |>
       suppressMessages ()
-    
-    
+
+
     print("datos trimestral")
     return(opinion_empresarial_trimestral)
-    
->>>>>>> d9bc13d93983ee064765975b73266614999a7418
+
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
